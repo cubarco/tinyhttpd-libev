@@ -1,7 +1,11 @@
+CC = gcc
+CFLAGS += -Wall
+LDFLAGS += -lev
+
+httpd: httpd.o
+httpd.o: httpd.c
+
+.PHONY: all clean
 all: httpd
-
-httpd: httpd.c
-	gcc -W -Wall -lev -o httpd httpd.c
-
 clean:
-	rm httpd
+	rm httpd *.o
