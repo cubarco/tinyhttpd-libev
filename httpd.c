@@ -563,13 +563,16 @@ int main(void)
     make_socket_non_blocking(server_ctx->fd);
     printf("httpd running on port %d\n", port);
     ev_io_init(&server_ctx->io, accept_cb, server_ctx->fd, EV_READ);
-    ev_io_start(loop, &server_ctx->io);
+    ev_io_start(EV_A_ &server_ctx->io);
     ev_signal_init(&sigint_watcher, signal_cb, SIGINT);
     ev_signal_init(&sigterm_watcher, signal_cb, SIGTERM);
-    ev_signal_start(loop, &sigint_watcher);
-    ev_signal_start(loop, &sigterm_watcher);
-    ev_run(loop, 0);
+    ev_signal_start(EV_A_ &sigint_watcher);
+    ev_signal_start(EV_A_ &sigterm_watcher);
+    ev_unref(EV_A);
+    ev_unref(EV_A); /* signal watcher should not keep loop alive */
+    ev_run(EV_A_ 0);
 
+    printf("server going to shutdown.\n");
     close(server_ctx->fd);
     return(0);
 }
